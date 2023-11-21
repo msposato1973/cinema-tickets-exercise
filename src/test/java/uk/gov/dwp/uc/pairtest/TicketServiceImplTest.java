@@ -3,21 +3,16 @@ package uk.gov.dwp.uc.pairtest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-
 import thirdparty.seatbooking.SeatReservationService;
-import uk.gov.dwp.uc.pairtest.domain.*;
+import uk.gov.dwp.uc.pairtest.domain.TicketPurchaseRequest;
+import uk.gov.dwp.uc.pairtest.domain.TicketRequest;
 import uk.gov.dwp.uc.pairtest.domain.TicketRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
@@ -167,6 +162,19 @@ class TicketServiceImplTest {
 		assertEquals(2, ticketService.getTotalSeatsToAllocate());
 	 }
 	 
+	 @Test
+	 void testPurchaseGroceries_CalculatesCorrectAmountZeroInfantTowAdult() {
+		 TicketPurchaseRequest purchaseRequest = buildTicketPurchaseRequestZeroInfantTowAdult(5L);
+		    ticketService.purchaseTickets(purchaseRequest);
+			 
+			assertNotNull(ticketService);
+			assertEquals(3,  purchaseRequest.getTicketTypeRequests().length);
+			assertEquals(90,(int) ticketService.getTotalAmountToPay());
+			assertEquals(7, ticketService.getTotalSeatsToAllocate());
+	 }
+	 
+	 
+	 
 	 private TicketPurchaseRequest   buildTicketPurchaseRequestZeroCHILD (long accountId) {
 		 
 		 TicketRequest groceryRequestADULT = buildTicketRequest(TicketRequest.Type.ADULT, 2);
@@ -188,7 +196,7 @@ class TicketServiceImplTest {
 			return new TicketPurchaseRequest(accountId, ticketRequests);
 		}
 	 
-	 private TicketPurchaseRequest   buildTicketPurchaseRequestZeroInfant (long accountId) {
+	 private TicketPurchaseRequest   buildTicketPurchaseRequestZeroInfantTowAdult (long accountId) {
 		 
 		    TicketRequest groceryRequestADULT = buildTicketRequest(TicketRequest.Type.ADULT, 2);
 		    TicketRequest groceryRequestCHILD = buildTicketRequest(TicketRequest.Type.CHILD, 5);
